@@ -1,4 +1,4 @@
-export interface Report {
+export interface ReportDto {
     totalDebit: number,
     averageDailyDebit: number,
     dailyDebit: any,

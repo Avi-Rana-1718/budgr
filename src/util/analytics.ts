@@ -2,7 +2,8 @@ import papaparse from "papaparse";
 import { dataSource } from "./datasource";
 import { User } from "../entity/User";
 import { sendMail } from "./mail";
-import { Report } from "../dto/Report";
+import { ReportDto } from "../dto/ReportDto";
+import { Report } from "../entity/Report";
 
 export async function generateReport(data: string, id: any) {
   try {
@@ -10,7 +11,11 @@ export async function generateReport(data: string, id: any) {
     let userInfo = await userRepository.findOneBy({ id });
 
     if (!userInfo) {
-      throw new Error("User not found");
+        return {
+            success: false,
+            message: "Invalid auth token",
+            error: null
+        }
     }
 
     let result: any[] = papaparse.parse(data, {
@@ -18,7 +23,7 @@ export async function generateReport(data: string, id: any) {
       skipFirstNLines: 1,
     }).data;
 
-    let report: Report = {
+    let report: ReportDto = {
       totalDebit: 0,
       averageDailyDebit: 0,
       dailyDebit: {},
@@ -46,9 +51,19 @@ export async function generateReport(data: string, id: any) {
     report.peekSpendingTime = get12Time(hour) + "-" + peekSpendAgg;
     console.log(report);
 
-    sendMail(report, userInfo);
+    await saveReport(report, userInfo);
+    await sendMail(report, userInfo);
+    return {
+        success: true,
+        message: "Report mailed!",
+        error: null
+    }
   } catch (err) {
-    console.log("ERROR:", err);
+    return {
+        success: false,
+        message: "Error while generating report",
+        error: err
+    }
   }
 }
 
@@ -94,4 +109,20 @@ function getPeekSpendingHours(hoursMap: Map<number, number>) {
        throw new Error();
 
   return [mostCommonHour, hoursMap.get(mostCommonHour)]
+}
+
+
+async function saveReport(reportData: ReportDto, userInfo: User) {
+    const reportRepository = dataSource.getRepository(Report);
+    const report = new Report();
+    report.averageDailySpend = reportData.averageDailyDebit;
+    report.userId = userInfo.id;
+    report.totalSpend = reportData.totalDebit;
+
+    let dailyReport = Object.keys(reportData.dailyDebit)
+    report.startDate = dailyReport[0];
+    report.endDate = dailyReport[dailyReport.length-1];
+
+    await reportRepository.save(report);
+    console.log("Report saved!");
 }
