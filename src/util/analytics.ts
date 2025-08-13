@@ -33,15 +33,16 @@ export async function generateReport(data: string, id: any) {
     let hoursMap = new Map();
 
     result.forEach((el) => {
-      report.totalDebit += Number(el[2]);
+      const amount = Number(el[2].replace("Rs.", ""));
+      report.totalDebit += amount;
       report.dailyDebit[el[1]] =
-        (report.dailyDebit[el[1]] || 0) + Number(el[2]);
+        (report.dailyDebit[el[1]] || 0) + amount;
 
       let key = get24Time(el[0]);
       if (hoursMap.has(key)) {
-        hoursMap.set(key, hoursMap.get(key) + Number(el[2]));
+        hoursMap.set(key, hoursMap.get(key) + amount);
       } else {
-        hoursMap.set(key, Number(el[2]));
+        hoursMap.set(key, amount);
       }
     });
 
