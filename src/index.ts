@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import { generateReport } from "./util/analytics";
 import { dataSource } from "./util/datasource";
-import { User } from "./entity/User";
+import { auth } from "./util/auth";
 
 const app = express();
 dotenv.config();
@@ -15,19 +15,9 @@ app.post("/report", async (req: Request, res: Response) => {
   res.status(response.success ? 200 : 400).json(response);
 });
 
-app.post("/auth", (req: Request, res: Response) => {
-  let userData = req.body;
-  console.log(userData);
-
-  const user = new User();
-  user.email = userData.email;
-  user.password = userData.password;
-  user.name = userData.name;
-
-  let userRepository = dataSource.getRepository(User);
-  userRepository.save(user);
-
-  res.json("Saved");
+app.post("/auth", async (req: Request, res: Response) => {
+  const response = await auth(req.body);
+  res.status(response.success ? 200 : 400).json(response);
 });
 
 dataSource

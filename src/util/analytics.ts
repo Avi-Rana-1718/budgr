@@ -4,8 +4,9 @@ import { User } from "../entity/User";
 import { sendMail } from "./mail";
 import { ReportDto } from "../dto/ReportDto";
 import { Report } from "../entity/Report";
+import {ResponseDto} from "../dto/ResponseDto"
 
-export async function generateReport(data: string, id: any) {
+export async function generateReport(data: string, id: any): Promise<ResponseDto> {
   try {
     const userRepository = dataSource.getRepository(User);
     let userInfo = await userRepository.findOneBy({ id });
@@ -55,10 +56,10 @@ export async function generateReport(data: string, id: any) {
     await saveReport(report, userInfo);
     await sendMail(report, userInfo);
     return {
-        success: true,
-        message: "Report mailed!",
-        error: null
-    }
+            success: false,
+            message: "Invalid auth token",
+            error: null
+        }
   } catch (err) {
     return {
         success: false,
