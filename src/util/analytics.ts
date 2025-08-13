@@ -101,9 +101,16 @@ async function saveReport(reportData: ReportDto, userInfo: User) {
   report.totalSpend = reportData.totalDebit;
 
   let dailyReport = Object.keys(reportData.dailyDebit);
-  report.startDate = dailyReport[0];
-  report.endDate = dailyReport[dailyReport.length - 1];
+  report.startDate = formatDate(dailyReport[0]);
+  report.endDate = formatDate(dailyReport[dailyReport.length - 1]);
 
+  console.log(report);
+  
   await reportRepository.save(report);
   console.log("Report saved!");
+}
+
+function formatDate(dateStr: string) {
+  const [day, month, year] = dateStr.split("/");
+  return `${year}-${month}-${day}`;
 }
