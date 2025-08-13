@@ -15,13 +15,13 @@ export async function auth(userData: any): Promise<ResponseDto> {
       return {
         success: true,
         message: "User with this email already exists!",
-        data: user.id
+        data: user.id,
       };
     } else {
-        return {
-            success: false,
-            message: "Invalid credentials"
-        }
+      return {
+        success: false,
+        message: "Invalid credentials",
+      };
     }
   }
 
@@ -34,6 +34,6 @@ export async function auth(userData: any): Promise<ResponseDto> {
 
   return {
     success: true,
-    message: "New user created"
-  }
+    message: "New user created",
+  };
 }

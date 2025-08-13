@@ -48,7 +48,7 @@ function getEmailBody(reportData: ReportDto, name: string) {
   let peakAmount = "";
   if (peekData !== "—" && peekData.includes("-")) {
     const [time, amount] = peekData.split("-");
-    peakTime = time.trim();
+    peakTime = time.trim().toUpperCase();
     peakAmount = amount ? `₹${Number(amount).toFixed(2)}` : "";
   }
 
@@ -146,7 +146,7 @@ function getEmailBody(reportData: ReportDto, name: string) {
       </div>
 
       <div style="font-size: 12px; color: #9ca3af; text-align: center; padding: 0 24px 24px;">
-        You are receiving this email because you subscribed to Spending Tracker reports.
+        You are receiving this email because you subscribed to Budgr.
       </div>
     </div>
   </div>
