@@ -37,6 +37,8 @@ export async function generateReport(
     let hoursMap = new Map();
 
     result.forEach((el) => {
+      if(el[0]==undefined||el[1]==undefined||el[2]==undefined)
+        return;
       const amount = Number(el[2].replace("Rs.", ""));
       report.totalDebit += amount;
       report.dailyDebit[el[1]] = (report.dailyDebit[el[1]] || 0) + amount;
