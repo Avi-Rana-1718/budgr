@@ -2,7 +2,10 @@ import { ReportDto } from "../dto/ReportDto";
 import nodemailer from "nodemailer";
 import { User } from "../entity/User";
 import dotenv from "dotenv";
+import { context, Exception, trace } from "@opentelemetry/api";
 dotenv.config();
+
+const tracer = trace.getTracer("smtp-tracer");
 
 export async function sendMail(reportData: ReportDto, userInfo: User) {
   let date = new Date();
@@ -10,6 +13,7 @@ export async function sendMail(reportData: ReportDto, userInfo: User) {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();
 
+      const span = tracer.startSpan("SMTP send mail");
   try {
     const transporter = nodemailer.createTransport({
       host: "in-v3.mailjet.com",
@@ -21,21 +25,24 @@ export async function sendMail(reportData: ReportDto, userInfo: User) {
       secure: false,
     });
 
-    await transporter.sendMail({
-      from: process.env.EMAIL,
-      to: userInfo?.email,
-      subject: `Spending Report - ${day + "/" + month + "/" + year} | Budgr`,
-      html: await getEmailBody(reportData, userInfo.name),
+    await context.with(trace.setSpan(context.active(), span), async () => {
+      await transporter.sendMail({
+        from: process.env.EMAIL,
+        to: userInfo?.email,
+        subject: `Spending Report - ${day + "/" + month + "/" + year} | Budgr`,
+        html: getEmailBody(reportData, userInfo.name),
+      });
+      span.setAttribute("email", userInfo?.email);
     });
-
     console.log("Email sent to:", userInfo.email);
   } catch (err) {
     console.log("MAIL ERROR", err);
+    span.recordException(err as Error);
     return {
-        success: false,
-        message: "Error while sending mail.",
-        error: err
-    }
+      success: false,
+      message: "Error while sending mail.",
+      error: err,
+    };
   }
 }
 
@@ -119,7 +126,11 @@ function getEmailBody(reportData: ReportDto, name: string) {
         <div style="font-size: 20px; font-weight: 600; color: #880e4f;">
           ${peakTime}
         </div>
-        ${peakAmount ? `<div style="font-size: 14px; font-weight: 500; color: #ad1457; margin-top: 2px;">${peakAmount}</div>` : ""}
+        ${
+          peakAmount
+            ? `<div style="font-size: 14px; font-weight: 500; color: #ad1457; margin-top: 2px;">${peakAmount}</div>`
+            : ""
+        }
       </div>
 
       <!-- Daily Breakdown Table -->
