@@ -3,7 +3,7 @@ name: Build and Push Node.js Docker Image
 on:
   push:
     branches:
-      - main
+      - utility/reports
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
