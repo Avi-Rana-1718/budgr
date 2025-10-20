@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Report {
+export class Expense {
     @PrimaryGeneratedColumn("increment")
     id!: number;
 
@@ -9,14 +9,8 @@ export class Report {
     userId!: string;
 
     @Column("numeric", { precision: 10, scale: 2 })
-    totalSpend!: number;
+    amount!: number;
 
     @Column({type: "date"})
-    startDate!: string;
-
-    @Column({type: "date"})
-    endDate!: string;
-
-    @Column("numeric", { precision: 10, scale: 2 })
-    averageDailySpend!: number;
+    time!: string;
 }

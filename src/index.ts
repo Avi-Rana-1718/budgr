@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
-import { generateReport } from "./util/analytics";
+import { trackExpense } from "./util/analytics";
 import { dataSource } from "./util/datasource";
 import { auth } from "./util/auth";
 
@@ -10,8 +10,8 @@ app.use(express.json());
 app.use(express.text());
 app.use(express.urlencoded({ extended: true }));
 
-app.post("/report", async (req: Request, res: Response) => {
-  const response = await generateReport(req.body, req.query.token);
+app.post("/track", async (req: Request, res: Response) => {
+  const response = await trackExpense(req.body, req.query.token);
   res.status(response.success ? 200 : 400).json(response);
 });
 
