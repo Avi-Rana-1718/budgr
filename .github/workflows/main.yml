@@ -26,5 +26,5 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/budgr:latest
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/budgr-reports:latest
         file: ./Dockerfile

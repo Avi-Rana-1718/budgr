@@ -1,6 +1,7 @@
 import {DataSource} from 'typeorm';
 import { User } from '../entity/User';
 import dotenv from "dotenv"
+import { Expense } from '../entity/Expense';
 dotenv.config()
 
 export const dataSource = new DataSource({
@@ -8,5 +9,5 @@ export const dataSource = new DataSource({
     url: process.env.DB_URL,
     synchronize: true,
     logging: false,
-    entities: [User]
+    entities: [User, Expense]
 })
