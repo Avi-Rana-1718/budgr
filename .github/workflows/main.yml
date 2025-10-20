@@ -1,4 +1,4 @@
-name: Build docker image or Reports branch
+name: Build docker image of Reports branch
 
 on:
   push:

@@ -9,6 +9,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: utility/reports  # Specify branch here
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
