@@ -11,6 +11,9 @@ export class Expense {
     @Column("numeric", { precision: 10, scale: 2 })
     amount!: number;
 
+    @Column("text")
+    message!: string;
+
     @Column({type: "date"})
     time!: string;
 }
