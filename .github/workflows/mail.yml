@@ -1,4 +1,4 @@
-name: Run Docker Image Every 5 Minutes
+name: Send mail
 
 on:
   schedule:
